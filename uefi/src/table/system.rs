@@ -325,6 +325,18 @@ impl SystemTable<Runtime> {
         &*(*self.table).runtime_services.cast_const().cast()
     }
 
+    /// Access runtime services mutably (for set_time)
+    ///
+    /// # Safety
+    ///
+    /// This is unsafe because UEFI runtime services require an elaborate
+    /// CPU configuration which may not be preserved by OS loaders. See the
+    /// "Calling Conventions" chapter of the UEFI specification for details.
+    #[must_use]
+    pub unsafe fn runtime_services_mut(&mut self) -> &mut RuntimeServices {
+        unsafe { &mut *(*self.table).runtime_services.cast() }
+    }
+
     /// Changes the runtime addressing mode of EFI firmware from physical to virtual.
     /// It is up to the caller to translate the old SystemTable address to a new virtual
     /// address and provide it for this function.
